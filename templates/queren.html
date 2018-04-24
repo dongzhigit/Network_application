@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<head>
+	<meta charset="utf-8" />
+	<title>ZEROTECH | Operation platform | Login entry</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	<!-- BEGIN GLOBAL MANDATORY STYLES -->
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css"/>
+	<link href="{% static 'css/style-metro.css' %}" rel="stylesheet" type="text/css"/>
+	<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+	<link href="{% static 'css/login-soft.css' %}" rel="stylesheet" type="text/css"/>
+
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="login">
+	<!-- BEGIN LOGIN -->
+	<div class="content" style="text-align: center;margin-left:auto;margin-right:auto;">
+		<!-- BEGIN LOGIN FORM -->
+		<form method="post"> {% csrf_token %}
+			<h3 style="text-align: center;margin-left:auto;margin-right:auto;">审核申请</h3>
+            <div class="control-group">
+                <div class="controls">
+                    <textarea style="width: 120%;height: 200px;margin-top: 5%;margin-left: -30px;color: blue" disabled>
+                        {% if a == 'net' %}
+申请人:{{ username }}
+申请人部门:{{ department }}
+被申请人：{{ claimant }}
+被申请人公司：{{ company }}
+物理地址(MAC)：{{ mac }}
+所在项目：{{ project }}
+起始日期：{{ begintime }}
+结束日期：{{ endtime }}
+申请时间：{{ system_time }}
+                        {% elif a == 'open' %}
+申请人:{{ username }}
+申请人邮箱:{{ mail }}
+申请人部门:{{ department }}
+申请原因：{{ notes }}
+申请时间：{{ system_time }}
+                        {% endif %}
+                    </textarea>
+                </div>
+            </div>
+
+			<div class="control-group">
+                <div class="controls">
+                    <textarea style="width: 120%;height: 110px;margin-top: 5%;margin-left: -30px;" name="shnotes" placeholder="审批意见"></textarea>
+                </div>
+            </div>
+            {% if tishi != '' %}
+                <div class="alert alert-error" style="width: 180px;">
+                    <button class="close" data-dismiss="alert"></button>
+                    <span>{{ tishi }}</span>
+                </div>
+            {% endif %}
+			<div>
+                <button type="submit" name="submit" value="yes" class="btn blue pull-right" style="width: 70px;margin-right: 34%;">
+				同意
+				</button>
+				<button type="submit" name="submit" value="no" class="btn blue pull-right">
+				不同意
+				</button>
+			</div>
+		</form>
+		<!-- END REGISTRATION FORM -->
+	</div>
+	<!-- END LOGIN -->
+	<!-- BEGIN COPYRIGHT -->
+	<div class="copyright">
+
+	</div>
+</body>
+<!-- END BODY -->
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ZEROTECH | Operation Network</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/style-metro.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+</head>
+    <!-- BEGIN PAGE CONTENT-->
+<body>
+<div class="show">
+    <div class="subbox">
+        <a href="/" class="up">外来人员网络申请</a>
+        <a href="/openvpn" class="down">openVPN申请</a>
+    </div>
+</div>
+<div class="portlet box ">
+    <div class="portlet-body form">
+        <form action="" class="form-horizontal" method="post"> {% csrf_token %}
+                <div class="tab-content">
+                        <h3 class="block" style="line-height: 60px;">外来人员网络权限申请</h3>
+                        <div class="control-group">
+                            <label class="control-label">申请人<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="text" class="span6 m-wrap" name="username" value="{{ username }}"/>
+                                <span class="help-inline">请正确填写本人中文姓名(零度智控员工)</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">申请人部门<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="text" class="span6 m-wrap" name="department" value="{{ department }}"/>
+                                <span class="help-inline">申请人所在部门(零度智控员工)</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">被申请人<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="text" class="span6 m-wrap" name="claimant" value="{{ claimant }}"/>
+                                <span class="help-inline">填写被申请人姓名(外来人员)</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">被申请人公司<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="text" class="span6 m-wrap" name="company" value="{{ company }}"/>
+                                <span class="help-inline">被申请人公司名称(外来人员)</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">物理地址(MAC)<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="text" class="span6 m-wrap" name="mac" value="{{ mac }}"/>
+                                <span class="help-inline">被申请人电脑物理地址(有线网卡，例：00-11-22-33-44-55)</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">所在项目名称<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="text" class="span6 m-wrap" name="project" value="{{ project }}"/>
+                                <span class="help-inline">属于哪个项目或工程</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">时间选择<span class="required">*</span></label>
+                            <div class="controls">
+                                <input type="date" class="span6 m-wrap" name="begintime" style="width: 203px;" value="{{ begintime }}"/>
+                                _ _
+                                <input type="date" class="span6 m-wrap" name="endtime" style="width: 203px;" value="{{ endtime }}"/>
+                                <span class="help-inline">选择申请区间日期(起始日期和结束，最长不能超过三天)</span>
+                            </div>
+                        </div>
+                    {% if log == 0 %}
+                        <div class="alert alert-error" style="width: 30%;margin-left: 28%;">
+                            <button class="close" data-dismiss="alert"></button>
+                            <span>请正确填写申请内容！！！</span>
+                        </div>
+                    {% elif log == 1 %}
+                        <div class="alert alert-success" style="width: 30%;margin-left: 28%;">
+                            <button class="close" data-dismiss="alert"></button>
+                            <span>申请已提交，请等待开通......</span>
+                        </div>
+                    {% elif log == 2 %}
+                        <div class="alert alert-error" style="width: 30%;margin-left: 28%;">
+                            <button class="close" data-dismiss="alert"></button>
+                            <span>申请时间不能超过三天，请重新选择.</span>
+                        </div>
+                    {% elif log == 3 %}
+                        <div class="alert alert-error" style="width: 30%;margin-left: 28%;">
+                            <button class="close" data-dismiss="alert"></button>
+                            <span>开始日期已成过去式，请重新选择.</span>
+                        </div>
+                    {% elif log == 4 %}
+                        <div class="alert alert-error" style="width: 30%;margin-left: 28%;">
+                            <button class="close" data-dismiss="alert"></button>
+                            <span>日期选择错误，请重新选择.</span>
+                        </div>
+                    {% elif log == 5 %}
+                        <div class="alert alert-error" style="width: 30%;margin-left: 28%;">
+                            <button class="close" data-dismiss="alert"></button>
+                            <span>同一时间段内相同MAC不能重复申请</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="control-group" style="line-height: 70px;">
+                        <i class="control-label"></i>
+                        <button class="btn blue button-next" id="button" name="Submit" type="Submit" value="Submit" style="width: 10%;">
+                        提交</button>
+                    </div>
+                </div>
+        </form>
+    </div>
+</div>
+{% if hh %}
+<script>alert('申请已发送\n' +
+    '被申请人：{{ claimant }}\n' +
+    '被申请人公司：{{ company }}\n' +
+    '物理地址(MAC)：{{ mac }}\n' +
+    '所在项目名称：{{ project }}\n' +
+    '开始日期：{{ begintime }}\n' +
+    '结束日期：{{ endtime }}\n' +
+    '申请时间：{{ system_time }}\n');window.location.href='http://192.168.50.244:818/';</script>
+{% endif %}
+</body>

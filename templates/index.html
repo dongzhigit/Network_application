@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en" style="background-color: #4A374A33;">
+<link rel="stylesheet" type="text/css" href="{% static 'css/table.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'css/lq.datetimepick.css' %}"/>
+<head>
+    <meta charset="UTF-8">
+    <title>考勤查询系统</title>
+    <link rel="shortcut icon" href="{% static 'images/index.png' %}">
+</head>
+<style>
+        html,body{text-align:center;margin:0px auto;}
+</style>
+<body>
+<div id="div-1"><a href="/logout" class="button">登录/注销</a></div>
+<form method="post"> {% csrf_token %}
+
+	<div style="display: inline-block;line-height: 55px;">
+		<span>起始日期：</span>
+        <input type="text" name="begintime" style="width: 203px;" id="datetimepicker1" class="form-control" value="{{ begintime }}" readonly/>
+	</div>
+	<div style="display: inline-block;line-height: 55px;">
+		<span>结束日期：</span>
+        <input type="text" name="endtime" style="width: 203px;" id="datetimepicker2" class="form-control" value="{{ endtime }}" readonly/>
+	</div>
+
+    {% if cn_name in admin_list %}
+        <div id="div-a">
+            姓名：
+            <input type="text" name="username" style="width: 203px;" value="{{ username }}" />
+        </div>
+    {% else %}
+        <div id="div-a">
+            姓名：
+            <input type="text" name="username" style="width: 203px;" value="{{ cn_name }}" disabled/>
+        </div>
+    {% endif %}
+    <div id="div-b">
+        <button name="Submit" type="Submit" value="Submit">提交</button>
+    </div>
+    <div id="div-c">
+        <input type="checkbox" name="vehicle" value="checked" {{ check_box_list }} />
+        不显示周末数据
+    </div>
+</form>
+<p style="color: red;">{{ log }}</p>
+{% if time_dic %}
+    <div id="table-5-con" class="table-5-warpper">
+        <table id="table-5" border="1">
+  <thead>
+    <th>姓名</th>
+    <th>ID</th>
+    <th>工号</th>
+    <th>日期</th>
+{#    <th>工作/休假</th>#}
+    <th>星期</th>
+    <th>上班打卡时间</th>
+    <th>下班打卡时间</th>
+  </thead>
+<tbody>
+    <tr>
+{% if check_box_list %}
+    {% for i,y in time_dic.items %}
+        {% if y.week != '星期六' and y.week != '星期日' %}
+            {% if i <= present_date %}
+                <tr>
+                <td>{{ y.name }}</td>
+                <td>{{ y.uid }}</td>
+                <td>{{ y.userid }}</td>
+                <td>{{ i }}</td>
+            {#    <td>{{ y.tool }}</td>#}
+                <td>{{ y.week }}</td>
+                {% if y.1 and y.2 %}
+                    {% if y.1 > '08:30:00' %}
+                    <td bgcolor="#FF359A">{{ y.1 }}</td>
+                    {% else %}
+                        <td>{{ y.1 }}</td>
+                    {% endif %}
+                    {% if y.2 < '17:29:59' %}
+                    <td bgcolor="#FF0000">{{ y.2 }}</td>
+                    {% else %}
+                        <td>{{ y.2 }}</td>
+                    {% endif %}
+                {% elif y.day != 5 and y.day != 6 %}
+                    <td bgcolor="#ffad4e">{{ y.1 }}</td>
+                    <td bgcolor="#ffad4e">{{ y.2 }}</td>
+                {% else %}
+                    <td bgcolor="#d6f0ff"></td>
+                    <td bgcolor="#d6f0ff"></td>
+                {% endif %}
+                </tr>
+            {% endif %}
+        {% endif %}
+    </tbody>
+    {% endfor %}
+{% else %}
+    {% for i,y in time_dic.items %}
+        {% if i <= present_date %}
+            <tr>
+            <td>{{ y.name }}</td>
+            <td>{{ y.uid }}</td>
+            <td>{{ y.userid }}</td>
+            <td>{{ i }}</td>
+        {#    <td>{{ y.tool }}</td>#}
+            <td>{{ y.week }}</td>
+            {% if y.1 and y.2 %}
+                {% if y.1 > '08:30:00' %}
+                <td bgcolor="#FF359A">{{ y.1 }}</td>
+                {% else %}
+                    <td>{{ y.1 }}</td>
+                {% endif %}
+                {% if y.2 < '17:29:59' %}
+                <td bgcolor="#FF0000">{{ y.2 }}</td>
+                {% else %}
+                    <td>{{ y.2 }}</td>
+                {% endif %}
+            {% elif y.day != 5 and y.day != 6 %}
+                <td bgcolor="#ffad4e">{{ y.1 }}</td>
+                <td bgcolor="#ffad4e">{{ y.2 }}</td>
+            {% else %}
+                <td bgcolor="#d6f0ff"></td>
+                <td bgcolor="#d6f0ff"></td>
+            {% endif %}
+            </tr>
+        {% endif %}
+    </tbody>
+    {% endfor %}
+{% endif %}
+</table>
+    </div>
+{% endif %}
+
+<script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
+<script src='{% static 'js/selectUi.js' %}' type='text/javascript'></script>
+<script src='{% static 'js/lq.datetimepick.js' %}' type='text/javascript'></script>
+<script type="text/javascript">
+$(function (){
+	var dateValue1 = ''; // 开始时间value值
+	var dateValue2 = ''; // 结束时间value值
+
+	$("#datetimepicker1").on("click",function(e){
+		e.stopPropagation();
+		$(this).lqdatetimepicker({
+			css : 'datetime-day',
+			dateType : 'D',
+			selectback : function(){
+				var value1 = $("#datetimepicker1").val();
+				var dateArr = value1.split('-');
+				var mm = dateArr[1];
+				if (mm * 1 < 10) {
+					mm = '0' + mm;
+					dateArr[1] = mm;
+				}
+				dateValue1 = dateArr.join('-');
+				$("#datetimepicker1").val(dateValue1);
+			}
+		});
+
+	});
+	$("#datetimepicker2").on("click",function(e){
+		e.stopPropagation();
+		$(this).lqdatetimepicker({
+			css : 'datetime-day',
+			dateType : 'D',
+			selectback : function(){
+				var value2 = $("#datetimepicker2").val();
+				var dateArr = value2.split('-');
+				var mm = dateArr[1];
+				if (mm * 1 < 10) {
+					mm = '0' + mm;
+					dateArr[1] = mm;
+				}
+				dateValue2 = dateArr.join('-');
+				$("#datetimepicker2").val(dateValue2);
+			}
+		});
+
+	});
+
+});
+</script>
+
+</body>
+</html>
